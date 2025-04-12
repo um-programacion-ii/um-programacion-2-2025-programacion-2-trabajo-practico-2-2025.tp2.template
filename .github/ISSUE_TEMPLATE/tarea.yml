@@ -1,5 +1,8 @@
+
 name: Tarea TP Biblioteca Digital
 description: Crear una nueva tarea vinculada a un milestone y al project correspondiente.
+
+
 title: "[Tarea] "
 labels: ["tarea"]
 assignees:
@@ -9,13 +12,13 @@ body:
     attributes:
       value: |
         ⚠️ **Completa los siguientes campos para registrar esta tarea correctamente.**  
-        Recordá vincular el Issue a un *Milestone* y al *Project* correspondiente.
 
   - type: input
     id: objetivo
     attributes:
       label: Objetivo
       description: ¿Qué se busca lograr con esta tarea?
+l
       placeholder: Crear clase Usuario con atributos básicos
     validations:
       required: true
@@ -30,6 +33,7 @@ body:
         - Agregar constructor
         - Implementar getters y setters
         - Probar en Consola o clase Main
+
     validations:
       required: true
 
@@ -43,6 +47,7 @@ body:
         - Etapa 2 - Gestión de Recursos y Colecciones
         - Etapa 3 - Sistema de Préstamos y Reservas
         - Etapa 4 - Reportes y Análisis
+
     validations:
       required: true
 
@@ -56,3 +61,4 @@ body:
         - label: La funcionalidad fue probada desde Consola o Main.
         - label: Se creó una rama específica para esta tarea.
         - label: Se abrió un Pull Request que menciona este Issue.
+
