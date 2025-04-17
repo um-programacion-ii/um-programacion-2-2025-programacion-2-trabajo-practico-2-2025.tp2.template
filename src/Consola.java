@@ -1,4 +1,9 @@
 public class Consola {
+    public static void testerLSP(RecursoDigital t) {
+        t.mostrarInformacionLibro();
+        t.acceder();
+    }
+
     public void iniciar() {
         Revista revista1 = new Revista();
         revista1.setTitulo("Remix Semanal");
@@ -33,6 +38,11 @@ public class Consola {
         Comic1.setIlustrador("Xi Wong Liu");
         Comic1.mostrarInformacionLibro();
         Comic1.acceder();
+
+        System.out.println("****************************** Testeo LSP **************************************");
+        testerLSP(Comic1);
+        testerLSP(AudioLibro1);
+        testerLSP(revista1);
 
     }
 }
