@@ -1,4 +1,4 @@
-public class Comics extends Libro implements RecursoDigital{
+public class Comics extends Libro implements RecursoDigital, Prestable{
     private int idComic;
     private int cantidadPaginas;
     private String ilustrador;
@@ -49,5 +49,10 @@ public class Comics extends Libro implements RecursoDigital{
     @Override
     public void acceder() {
         System.out.println("Se inicia la lectura de las " + getCantidadPaginas() + " paginas del Libro");
+    }
+
+    @Override
+    public void mostrarSiEsPrestable() {
+        System.out.println("El libro seleccionado es prestable");
     }
 }

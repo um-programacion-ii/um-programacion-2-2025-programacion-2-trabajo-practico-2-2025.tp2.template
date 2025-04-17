@@ -1,8 +1,8 @@
-public class Revista extends Libro implements RecursoDigital{
+public class Revista extends Libro implements RecursoDigital, Prestable{
     private int idRevista;
     private int cantidadPaginas;
 
-    public Revista(int idLibro, int añoPublicacion, String titulo, String autor, String genero, int idRevista, int cantidadPaginas) {
+    public Revista(int idLibro, int añoPublicacion, String titulo, String autor, String genero) {
         super(idLibro, añoPublicacion, titulo, autor, genero);
     }
 
@@ -41,4 +41,12 @@ public class Revista extends Libro implements RecursoDigital{
     public void acceder() {
         System.out.println("Se inicia la lectura de las " + getCantidadPaginas() + " paginas del Libro");
     }
+
+    @Override
+    public void mostrarSiEsPrestable() {
+        System.out.println("El libro seleccionado es prestable");
+
+    }
+
+
 }
