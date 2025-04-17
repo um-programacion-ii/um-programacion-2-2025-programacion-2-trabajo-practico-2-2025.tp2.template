@@ -1,3 +1,4 @@
+import java.util.Scanner;
 public class Consola {
     public static void testerLSP(RecursoDigital t) {
         t.mostrarInformacionLibro();
@@ -44,5 +45,17 @@ public class Consola {
         testerLSP(AudioLibro1);
         testerLSP(revista1);
 
-    }
-}
+        System.out.println(" ------------------------------------------------------------------------------------");
+        System.out.println("Ingrese el Libro que desea y le diremos si es renovable o prestable");
+        System.out.println("1.Revista");
+        System.out.println("2.AudioLibro");
+        System.out.println("3.Comics");
+        System.out.println(" ");
+
+        Scanner lectura = new Scanner(System.in);
+        int valorSeleccionado = lectura.nextInt();
+        GestorRecursos.gestionPrestamosRenovacion(valorSeleccionado);
+
+
+
+}}

@@ -1,4 +1,4 @@
-public class AudioLibro extends Libro implements  RecursoDigital{
+public class AudioLibro extends Libro implements  RecursoDigital, Renovable{
     private int idAudioLibro;
     private float duracionMinutos;
     public AudioLibro(int idLibro, int añoPublicacion, String titulo, String autor, String genero) {
@@ -39,5 +39,10 @@ public class AudioLibro extends Libro implements  RecursoDigital{
     @Override
     public void acceder() {
         System.out.println("Se inicia la reproduccion de los " + getDuracionMinutos() + " minutos del Libro");
+    }
+
+    @Override
+    public void mostrarSiEsRenovable() {
+        System.out.println("El libro seleccionado es renovable");
     }
 }
