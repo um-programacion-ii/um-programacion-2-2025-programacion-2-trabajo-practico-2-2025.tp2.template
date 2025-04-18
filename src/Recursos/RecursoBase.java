@@ -1,8 +1,4 @@
 package Recursos;
-import Interfaces.*;
-import Recursos.*;
-import Servicios.*;
-import Interaccion.*;
 import Usuarios.*;
 import Interfaces.Prestable;
 import Interfaces.RecursoDigital;
