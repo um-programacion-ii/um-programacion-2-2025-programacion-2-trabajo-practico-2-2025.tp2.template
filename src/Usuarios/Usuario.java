@@ -1,15 +1,35 @@
+package Usuarios;
+
 public class Usuario {
+    static int contadorUsuarios = 0;
     private int idUsuario;
     private String nombre;
-    private int edad;
     private String email;
+    private String telefono;
 
-    public Usuario(int idUsuario, String nombre, int edad, String email) {
-        this.idUsuario = idUsuario;
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "ID de Usuarios.Usuario: " + idUsuario +
+                ", Nombre: '" + nombre + '\'' +
+                ", Email: '" + email + '\'';
+    }
+
+    public Usuario(String nombre, String email) {
+        this.idUsuario = contadorUsuarios ;
+        contadorUsuarios ++;
         this.nombre = nombre;
-        this.edad = edad;
         this.email = email;
     }
+
 
     public int getIdUsuario() {
         return idUsuario;
@@ -25,14 +45,6 @@ public class Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
     }
 
     public String getEmail() {
