@@ -12,8 +12,8 @@ import Usuarios.*;
 public class Audiolibro extends RecursoBase implements Renovable {
     private LocalDateTime fechaDevolucion;
 
-    public Audiolibro(String titulo, String autor, EstadoRecurso estado) {
-        super(titulo, autor, estado);
+    public Audiolibro(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
+        super(titulo, autor, estado, categoria);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class Audiolibro extends RecursoBase implements Renovable {
     @Override
     public void renovar() {
         if (esRenovable()) {
-            this.fechaDevolucion = this.fechaDevolucion.plusDays(7); // ¡Sumamos sobre la fecha anterior!
+            this.fechaDevolucion = this.fechaDevolucion.plusDays(7);
             System.out.println("Recursos.Libro renovado con éxito. Nueva fecha de devolución: " + this.fechaDevolucion);
         } else {
             System.out.println("No se puede renovar: estado actual = " + getEstado());

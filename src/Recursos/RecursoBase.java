@@ -2,7 +2,7 @@ package Recursos;
 import Usuarios.*;
 import Interfaces.Prestable;
 import Interfaces.RecursoDigital;
-
+import Excepciones.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,23 @@ public class RecursoBase implements RecursoDigital, Prestable {
     private EstadoRecurso estado;
     private List<RecursoBase> Recursos = new ArrayList<>();
     private LocalDateTime fechaDevolucion;
+    private CategoriaRecurso categoria;
 
-    public RecursoBase(String titulo, String autor, EstadoRecurso estado) {
+    public CategoriaRecurso getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaRecurso categoria) {
+        this.categoria = categoria;
+    }
+
+    public RecursoBase(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
         this.idRecursoBase = contadorRecursos;
         contadorRecursos++;
         this.titulo = titulo;
         this.autor = autor;
         this.estado = estado;
+        this.categoria = categoria;
     }
 
 
@@ -81,7 +91,9 @@ public class RecursoBase implements RecursoDigital, Prestable {
                 "ID de Recurso: " + idRecursoBase +
                         ", Titulo: '" + titulo + '\'' +
                         ", Autor: '" +   autor +'\'' +
-                        ", Estado: '" +  estado+ '\'';
+                        ", Estado: '" +  estado+ '\''
+                        +",Categoría: " + categoria;
+
 
     }
 
@@ -118,15 +130,16 @@ public class RecursoBase implements RecursoDigital, Prestable {
     }
 
     @Override
-    public void prestar(Usuario usuario) {
+    public void prestar(Usuario usuario) throws RecursoNoDisponibleException {
         if (estaDisponible()) {
             setEstado(EstadoRecurso.EnPrestamo);
             this.fechaDevolucion = LocalDateTime.now().plusDays(14);
-            System.out.println("Recursos.Libro prestado a " + usuario.getNombre());
+            System.out.println("Recurso prestado a " + usuario.getNombre());
         } else {
-            System.out.println("No se puede prestar: estado actual = " + getEstado());
+            throw new RecursoNoDisponibleException("El recurso no está disponible. Estado actual: " + getEstado());
         }
     }
+
 
     @Override
     public boolean estaDisponible() {

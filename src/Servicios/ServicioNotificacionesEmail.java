@@ -11,6 +11,5 @@ public class ServicioNotificacionesEmail implements ServicioNotificaciones {
     @Override
     public void enviarNotificacion(Usuario destinatario, String mensaje) {
         System.out.println("[EMAIL] Enviando a " + destinatario.getEmail() + ": " + mensaje);
-        // Lógica real de envío de email
     }
 }

@@ -7,6 +7,7 @@ import Interaccion.*;
 import Usuarios.*;
 import Interfaces.ServicioNotificaciones;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class GestorRecursos {
@@ -17,16 +18,39 @@ public class GestorRecursos {
         this.notificador = notificador;
     }
 
-    public void addRecurso(String titulo, String autor, EstadoRecurso estado, Usuario admin) {
-        RecursoBase recurso = new RecursoBase(titulo, autor, estado);
+    public void addRecurso(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
+        RecursoBase recurso = new RecursoBase(titulo, autor, estado, categoria);
         Recursos.add(recurso);
 
-        // Notificación al administrador
-        notificador.enviarNotificacion(admin,
-                "Nuevo recurso añadido: " + titulo +
-                        " (ID: " + recurso.getIdRecursoBase() + ")");
     }
 
+    public List<RecursoBase> buscarPorTitulo(String titulo) {
+        return Recursos.stream()
+                .filter(r -> r.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
+                .toList();
+    }
+
+    public List<RecursoBase> filtrarPorCategoria(CategoriaRecurso categoria) {
+        return Recursos.stream()
+                .filter(r -> r.getCategoria() == categoria)
+                .toList();
+    }
+
+    public List<RecursoBase> obtenerOrdenadosPorTitulo() {
+        return Recursos.stream()
+                .sorted(Comparator.comparing(RecursoBase::getTitulo))
+                .toList();
+    }
+
+    public void mostrarTodos() {
+        Recursos.forEach(System.out::println);
+    }
+
+    public void mostrarCategorias() {
+        for (CategoriaRecurso c : CategoriaRecurso.values()) {
+            System.out.println("- " + c);
+        }
+    }
     public void mostrarRecursos(){
         System.out.println("Lista de Recursos completa");
         Recursos.forEach(System.out::println);

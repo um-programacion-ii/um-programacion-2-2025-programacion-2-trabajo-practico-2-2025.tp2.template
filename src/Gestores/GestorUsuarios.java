@@ -1,10 +1,6 @@
 package Gestores;
-import Interfaces.*;
-import Recursos.*;
-import Gestores.*;
-import Servicios.*;
-import Interaccion.*;
 import Usuarios.*;
+import Excepciones.*;
 import Interfaces.ServicioNotificaciones;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +21,18 @@ public class GestorUsuarios {
                 "Bienvenido " + nombre + "! Tu cuenta fue creada exitosamente.");
     }
     public void mostrarLista() {
-        System.out.println("Lista completa:");
         Usuarios.forEach(System.out::println);
     }
+
+    public Usuario buscarPorEmail(String email) throws UsuarioNoEncontradoException {
+        for (Usuario u : Usuarios) {
+            if (u.getEmail().equalsIgnoreCase(email.trim())) {
+                return u;
+            }
+        }
+        throw new UsuarioNoEncontradoException("No se encontró ningún usuario con el email: " + email);
+    }
+
+
+
 }

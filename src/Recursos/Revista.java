@@ -12,8 +12,8 @@ public class Revista extends RecursoBase implements Renovable {
     private boolean disponible = true;
     private LocalDateTime fechaDevolucion;
 
-    public Revista(String titulo, String autor, EstadoRecurso estado) {
-        super(titulo, autor, estado);
+    public Revista(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
+        super(titulo, autor, estado, categoria);
     }
 
 
@@ -32,7 +32,7 @@ public class Revista extends RecursoBase implements Renovable {
     @Override
     public void renovar() {
         if (esRenovable()) {
-            this.fechaDevolucion = this.fechaDevolucion.plusDays(7); // ¡Sumamos sobre la fecha anterior!
+            this.fechaDevolucion = this.fechaDevolucion.plusDays(7);
             System.out.println("Recursos.Libro renovado con éxito. Nueva fecha de devolución: " + this.fechaDevolucion);
         } else {
             System.out.println("No se puede renovar: estado actual = " + getEstado());
