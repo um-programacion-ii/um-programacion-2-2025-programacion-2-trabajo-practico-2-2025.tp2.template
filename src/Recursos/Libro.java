@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 public class Libro extends RecursoBase implements Renovable {
 
-    public Libro(String titulo, String autor, EstadoRecurso estado) {
-        super(titulo, autor, estado);
+    public Libro(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
+        super(titulo, autor, estado, categoria);
     }
 
     public Libro() {
