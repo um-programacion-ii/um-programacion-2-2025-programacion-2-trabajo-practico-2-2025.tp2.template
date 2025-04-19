@@ -13,6 +13,7 @@ public class RecursoBase implements RecursoDigital, Prestable {
     private String titulo;
     private String autor;
     private EstadoRecurso estado;
+
     private List<RecursoBase> Recursos = new ArrayList<>();
     private LocalDateTime fechaDevolucion;
     private CategoriaRecurso categoria;
@@ -140,6 +141,13 @@ public class RecursoBase implements RecursoDigital, Prestable {
         }
     }
 
+
+    @Override
+    public void devolver() {
+        setEstado(EstadoRecurso.Disponible);
+        this.fechaDevolucion = null;
+        System.out.println("Recurso devuelto.");
+    }
 
     @Override
     public boolean estaDisponible() {
