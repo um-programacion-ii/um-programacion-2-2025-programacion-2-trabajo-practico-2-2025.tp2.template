@@ -33,10 +33,11 @@ public class GestorReportes {
                 .collect(Collectors.toList());
     }
 
-    public Map<String, Long> prestamosPorTipo() {
+    public Map<String, Long> prestamosPorCategoria() {
         return prestamos.stream()
-                .collect(Collectors.groupingBy(p -> p.getRecurso().getTipo().name(), Collectors.counting()));
+                .collect(Collectors.groupingBy(p -> p.getRecurso().getCategoria().name(), Collectors.counting()));
     }
+
 
     public void mostrarReporteRecursosMasPrestados() {
         System.out.println("\n📊 Recursos más prestados:");

@@ -74,7 +74,7 @@ public class Consola {
         String titulo = scanner.nextLine();
         System.out.print("ID del recurso: ");
         String idRecurso = scanner.nextLine();
-        System.out.print("Tipo (LIBRO, REVISTA, AUDIOLIBRO): ");
+        System.out.print("Categoría (LIBRO, REVISTA, AUDIOLIBRO): ");
         String tipo = scanner.nextLine().toUpperCase();
 
         RecursoBase recurso = switch (tipo) {
