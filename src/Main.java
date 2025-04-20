@@ -1,47 +1,54 @@
-import modelo.*;
-import gestores.GestorReportes;
-import servicios.AlertaVencimiento;
+import gestores.GestorRecursos;
+import gestores.GestorUsuarios;
+import gestores.SistemaPrestamos;
+import modelo.Audiolibro;
+import modelo.Libro;
+import modelo.Prestamo;
+import modelo.RecursoBase;
+import modelo.Revista;
+import modelo.Usuario;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
 
-        // Registro de usuarios
-        Usuario usuario1 = new Usuario("U001", "Juan Pérez", "juan@email.com");
-        Usuario usuario2 = new Usuario("U002", "María López", "maria@email.com");
+        // Instanciar gestores
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        GestorRecursos gestorRecursos = new GestorRecursos();
+        SistemaPrestamos sistemaPrestamos = new SistemaPrestamos();
 
-        // Registro de recursos
+        // Registrar usuarios
+        Usuario usuario1 = new Usuario("U001", "Bruno Piastrellini", "bruno@email.com");
+        gestorUsuarios.registrarUsuario(usuario1);
+
+        // Registrar recursos
         Libro libro = new Libro("El Principito", "L001");
         Revista revista = new Revista("Muy Interesante", "R001");
-        Audiolibro audio = new Audiolibro("Cuentos en voz alta", "A001");
+        Audiolibro audiolibro = new Audiolibro("Cuentos para escuchar", "A001");
 
-        // Préstamos simulados
-        List<Prestamo> prestamos = new ArrayList<>();
-        prestamos.add(new Prestamo(usuario1, libro));
-        prestamos.add(new Prestamo(usuario2, revista));
-        prestamos.add(new Prestamo(usuario2, audio));
-        prestamos.add(new Prestamo(usuario1, audio));
+        gestorRecursos.registrarRecurso(libro);
+        gestorRecursos.registrarRecurso(revista);
+        gestorRecursos.registrarRecurso(audiolibro);
 
-        // Reportes
-        GestorReportes reportes = new GestorReportes(prestamos);
+        // Buscar usuario y recurso
+        Usuario usuarioEncontrado = gestorUsuarios.buscarUsuarioPorId("U001");
+        RecursoBase recursoEncontrado = gestorRecursos.buscarRecursoPorId("L001");
 
-        System.out.println("\n=== 📘 Reporte: Recursos Más Prestados ===");
-        reportes.recursosMasPrestados().forEach(entry ->
-                System.out.println(entry.getKey().getTitulo() + " → " + entry.getValue() + " préstamos"));
+        // Intentar realizar préstamo
+        boolean exito = sistemaPrestamos.realizarPrestamo(usuarioEncontrado, recursoEncontrado);
 
-        System.out.println("\n=== 👤 Reporte: Usuarios Más Activos ===");
-        reportes.usuariosMasActivos().forEach(entry ->
-                System.out.println(entry.getKey().getNombre() + " → " + entry.getValue() + " préstamos"));
+        if (exito) {
+            System.out.println("✅ Préstamo realizado con éxito.");
+        } else {
+            System.out.println("❌ No se pudo realizar el préstamo.");
+        }
 
-        System.out.println("\n=== 🧾 Reporte: Préstamos por Tipo de Recurso ===");
-        reportes.prestamosPorTipo().forEach((tipo, cantidad) ->
-                System.out.println(tipo + " → " + cantidad));
-
-        // Alertas de vencimiento
-        System.out.println("\n=== 🛎️  Alertas de Vencimiento ===");
-        AlertaVencimiento alertas = new AlertaVencimiento();
-        alertas.verificarVencimientos(prestamos);
+        // Mostrar préstamos realizados
+        List<Prestamo> prestamosRealizados = sistemaPrestamos.getTodos();
+        System.out.println("\n📋 Lista de préstamos:");
+        for (Prestamo p : prestamosRealizados) {
+            System.out.println(p.getUsuario().getNombre() + " → " + p.getRecurso().getTitulo());
+        }
     }
 }

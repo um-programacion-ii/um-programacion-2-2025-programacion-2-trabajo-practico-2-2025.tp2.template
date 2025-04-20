@@ -1,24 +1,25 @@
 package gestores;
 
-import modelo.Reserva;
+import modelo.Prestamo;
+import modelo.RecursoBase;
 import modelo.Usuario;
-import modelo.EstadoRecurso;
-import interfaces.RecursoDigital;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SistemaPrestamos {
+    private final List<Prestamo> prestamos = new ArrayList<>();
 
-    private final SistemaReservas sistemaReservas = new SistemaReservas();
+    public boolean realizarPrestamo(Usuario usuario, RecursoBase recurso) {
+        if (usuario == null || recurso == null || !recurso.estaDisponible()) return false;
 
-    public void devolverRecurso(RecursoDigital recurso) {
-        recurso.actualizarEstado(EstadoRecurso.DISPONIBLE);
-        System.out.println("📦 Recurso '" + recurso.getIdentificador() + "' devuelto con éxito.");
+        Prestamo prestamo = new Prestamo(usuario, recurso);
+        prestamos.add(prestamo);
+        recurso.prestar(usuario);
+        return true;
+    }
 
-        if (sistemaReservas.tieneReservasPendientes(recurso.getIdentificador())) {
-            Reserva siguiente = sistemaReservas.obtenerProximaReserva(recurso.getIdentificador());
-            System.out.println("🔔 Notificar a " + siguiente.getUsuario().getNombre()
-                    + ": el recurso '" + recurso.getIdentificador() + "' está disponible.");
-
-        }
+    public List<Prestamo> getTodos() {
+        return prestamos;
     }
 }
-
