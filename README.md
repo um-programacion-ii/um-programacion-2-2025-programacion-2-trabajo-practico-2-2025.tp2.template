@@ -54,12 +54,12 @@ La guía debe ser clara, concisa y permitir a cualquier usuario entender y proba
   - Ordenamiento de resultados
 
 #### 2. Gestión de Usuarios
-- **Registrar Usuario**:
+- **Registrar src.Usuario**:
   - Proceso de registro de nuevos usuarios
   - Validación de datos del usuario
   - Verificación del registro exitoso
 
-- **Buscar Usuario**:
+- **Buscar src.Usuario**:
   - Proceso de búsqueda de usuarios
   - Visualización de información del usuario
   - Manejo de usuarios no encontrados
@@ -127,7 +127,7 @@ La guía debe ser clara, concisa y permitir a cualquier usuario entender y proba
 
 ### Etapa 1: Diseño Base y Principios SOLID
 - **SRP**: 
-  - Crear clase `Usuario` con atributos básicos (nombre, ID, email)
+  - Crear clase `src.Usuario` con atributos básicos (nombre, ID, email)
   - Crear clase `RecursoDigital` como clase base abstracta
   - Implementar clase `GestorUsuarios` separada de `GestorRecursos`
   - Cada clase debe tener una única responsabilidad clara
@@ -161,7 +161,7 @@ La guía debe ser clara, concisa y permitir a cualquier usuario entender y proba
 ### Etapa 2: Gestión de Recursos y Colecciones
 - Implementar colecciones:
   - Usar `ArrayList<RecursoDigital>` para almacenar recursos
-  - Usar `Map<String, Usuario>` para gestionar usuarios
+  - Usar `Map<String, src.Usuario>` para gestionar usuarios
   - Implementar métodos de búsqueda básicos
   - Crear menú de consola para gestión de recursos
 
@@ -243,22 +243,30 @@ La guía debe ser clara, concisa y permitir a cualquier usuario entender y proba
 ## 📋 Detalle de Implementación
 
 ### 1. Estructura Base
+
 ```java
+import src.Usuario;
+
 // Interfaces principales
 public interface RecursoDigital {
     String getIdentificador();
+
     EstadoRecurso getEstado();
+
     void actualizarEstado(EstadoRecurso estado);
 }
 
 public interface Prestable {
     boolean estaDisponible();
+
     LocalDateTime getFechaDevolucion();
+
     void prestar(Usuario usuario);
 }
 
 public interface Notificable {
     void enviarNotificacion(String mensaje);
+
     List<Notificacion> getNotificacionesPendientes();
 }
 

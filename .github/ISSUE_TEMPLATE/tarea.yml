@@ -16,7 +16,7 @@ body:
     attributes:
       label: Objetivo
       description: ¿Qué se busca lograr con esta tarea?
-      placeholder: Crear clase Vehiculo con atributos básicos
+      placeholder: Crear clase Usuario con atributos básicos
     validations:
       required: true
 
