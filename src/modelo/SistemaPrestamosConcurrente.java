@@ -1,4 +1,6 @@
 package gestores;
+import excepciones.UsuarioNoEncontradoException;
+import excepciones.RecursoNoDisponibleException;
 
 import modelo.SolicitudPrestamo;
 import modelo.Usuario;
@@ -43,40 +45,68 @@ public class SistemaPrestamosConcurrente {
     }
 
     private void procesarSolicitud(SolicitudPrestamo solicitud) {
-        Usuario usuario = solicitud.getUsuario();
-        RecursoBase recurso = solicitud.getRecurso();
+        try {
+            Usuario usuario = solicitud.getUsuario();
+            RecursoBase recurso = solicitud.getRecurso();
 
-        if (recurso.estaDisponible()) {
+            if (usuario == null) {
+                throw new UsuarioNoEncontradoException("Usuario no encontrado.");
+            }
+
+            if (recurso == null || !recurso.estaDisponible()) {
+                throw new RecursoNoDisponibleException("El recurso no está disponible para préstamo.");
+            }
+
             recurso.prestar(usuario);
             Prestamo prestamo = new Prestamo(usuario, recurso);
             synchronized (prestamos) {
                 prestamos.add(prestamo);
             }
+
             System.out.println("✅ [HILO] Préstamo procesado: " + usuario.getNombre() + " → " + recurso.getTitulo());
-        } else {
-            sistemaReservas.realizarReserva(usuario, recurso);
+
+        } catch (UsuarioNoEncontradoException | RecursoNoDisponibleException e) {
+            System.out.println("❌ [ERROR] " + e.getMessage());
         }
     }
+
 
     public void devolverRecurso(String idRecurso) {
-        synchronized (prestamos) {
-            for (Prestamo prestamo : prestamos) {
-                if (prestamo.getRecurso().getIdentificador().equals(idRecurso)) {
-                    prestamo.getRecurso().devolver();
-                    System.out.println("✅ Recurso devuelto correctamente.");
+        try {
+            synchronized (prestamos) {
+                Prestamo encontrado = null;
 
-                    if (sistemaReservas.hayReservasPendientes(idRecurso)) {
-                        Reserva siguiente = sistemaReservas.procesarProximaReserva(idRecurso);
-                        prestamo.getRecurso().prestar(siguiente.getUsuario());
-                        servicioNotificaciones.enviar("El recurso '" + prestamo.getRecurso().getTitulo()
-                                + "' fue entregado automáticamente a " + siguiente.getUsuario().getNombre());
+                for (Prestamo prestamo : prestamos) {
+                    if (prestamo.getRecurso().getIdentificador().equals(idRecurso)) {
+                        encontrado = prestamo;
+                        break;
                     }
+                }
 
-                    return;
+                if (encontrado == null) {
+                    throw new RecursoNoDisponibleException("No se encontró un préstamo activo para ese recurso.");
+                }
+
+                if (encontrado.getRecurso().estaDisponible()) {
+                    throw new RecursoNoDisponibleException("El recurso ya está disponible.");
+                }
+
+                encontrado.getRecurso().devolver();
+                System.out.println("✅ Recurso devuelto correctamente.");
+
+                if (sistemaReservas.hayReservasPendientes(idRecurso)) {
+                    Reserva siguiente = sistemaReservas.procesarProximaReserva(idRecurso);
+                    encontrado.getRecurso().prestar(siguiente.getUsuario());
+                    servicioNotificaciones.enviar("El recurso '" + encontrado.getRecurso().getTitulo()
+                            + "' fue entregado automáticamente a " + siguiente.getUsuario().getNombre());
                 }
             }
+
+        } catch (RecursoNoDisponibleException e) {
+            System.out.println("❌ [ERROR] " + e.getMessage());
         }
     }
+
 
     public void apagarProcesador() {
         executor.shutdownNow();
