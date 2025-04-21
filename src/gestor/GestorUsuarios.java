@@ -11,7 +11,11 @@ public class GestorUsuarios {
         usuarios.put(usuario.getId(), usuario);
     }
 
-    public Usuario buscarUsuarioPorId(String id) {
+    public Usuario buscarUsuario(String id) {
         return usuarios.get(id);
+    }
+
+    public void listarUsuarios() {
+        usuarios.values().forEach(System.out::println);
     }
 }
