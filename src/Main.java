@@ -1,3 +1,4 @@
+import gestor.GestorUsuarios;
 import modelo.usuario.Usuario;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -11,5 +12,9 @@ public class Main {
         System.out.println("Nombre: " + usuario.getNombre());
         System.out.println("ID: " + usuario.getId());
         System.out.println("Email: " + usuario.getEmail());
+        //probando gestor
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        gestorUsuarios.registrarUsuario(usuario);
+        System.out.println("Usuario registrado: " + gestorUsuarios.buscarUsuarioPorId("1"));
     }
 }
