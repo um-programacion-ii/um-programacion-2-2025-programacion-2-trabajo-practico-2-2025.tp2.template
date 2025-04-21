@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestorRecursos {
-    private List<RecursoDigital> recursos = new ArrayList<>();
+    private final List<RecursoDigital> recursos = new ArrayList<>();
 
     public void agregarRecurso(RecursoDigital recurso) {
         recursos.add(recurso);
     }
 
     public void listarRecursos() {
-        recursos.forEach(System.out::println);
+        if (recursos.isEmpty()) {
+            System.out.println("No hay recursos disponibles.");
+        } else {
+            recursos.forEach(r -> System.out.println(r.getDescripcion()));
+        }
     }
 }
