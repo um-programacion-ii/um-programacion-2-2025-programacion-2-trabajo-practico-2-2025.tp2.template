@@ -19,6 +19,11 @@ public class Libro implements RecursoDigital {
     }
 
     @Override
+    public String getEstado() {
+        return "";
+    }
+
+    @Override
     public String getDescripcion() {
         return "📘 Libro - Título: " + titulo + ", Autor: " + autor;
     }

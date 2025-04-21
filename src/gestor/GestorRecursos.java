@@ -11,7 +11,7 @@ public class GestorRecursos {
         recursos.add(recurso);
     }
 
-    public void listarRecursos(List<RecursoDigital> recursos) {
+    public void listarRecursos() {
         for (RecursoDigital recurso : recursos) {
             System.out.println("Título: " + recurso.getTitulo());
             System.out.println("Descripción: " + recurso.getDescripcion());
@@ -19,4 +19,6 @@ public class GestorRecursos {
             System.out.println("----------------------------------");
         }
     }
+
+
 }

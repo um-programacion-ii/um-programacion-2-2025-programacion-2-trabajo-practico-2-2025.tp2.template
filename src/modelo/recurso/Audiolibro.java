@@ -23,4 +23,9 @@ public class Audiolibro implements RecursoDigital {
     public String getAutor() {
         return "";
     }
+
+    @Override
+    public String getEstado() {
+        return "";
+    }
 }

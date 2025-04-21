@@ -1,23 +1,22 @@
-// Revista.java
 package modelo.recurso;
 
-public class Revista extends RecursoDigital {
+public class Revista implements RecursoDigital {
+    private final String titulo;
+    private final int numeroEdicion;
 
-    private int numeroEdicion;
-
-    public Revista(String id, int numeroEdicion) {
-        super(id, titulo);
+    public Revista(String titulo, int numeroEdicion) {
+        this.titulo = titulo;
         this.numeroEdicion = numeroEdicion;
     }
 
     @Override
     public String getTitulo() {
-        return "";
+        return titulo;
     }
 
     @Override
     public String getDescripcion() {
-        return "Revista edición Nº " + numeroEdicion;
+        return "📰 Revista - Título: " + titulo + ", Edición Nº: " + numeroEdicion;
     }
 
     @Override
@@ -26,7 +25,7 @@ public class Revista extends RecursoDigital {
     }
 
     @Override
-    public String toString() {
-        return super.toString() + " - Edición: " + numeroEdicion;
+    public String getEstado() {
+        return "";
     }
 }

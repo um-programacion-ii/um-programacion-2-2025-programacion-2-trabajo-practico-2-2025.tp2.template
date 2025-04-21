@@ -87,7 +87,12 @@ public class Consola {
         String titulo = scanner.nextLine();
         System.out.print("Número de edición: ");
         int edicion = Integer.parseInt(scanner.nextLine());
-        gestorRecursos.agregarRecurso(new Revista(titulo, edicion));
+        gestorRecursos.agregarRecurso(new Revista(titulo, edicion) {
+            @Override
+            public String getEstado() {
+                return "";
+            }
+        });
         System.out.println("✅ Revista registrada.");
     }
 
