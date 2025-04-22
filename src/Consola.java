@@ -35,7 +35,10 @@ public class Consola {
         System.out.println("1. Agregar Recurso");
         System.out.println("2. Mostrar Recurso por ID");
         System.out.println("3. Prestar Recurso");
-        System.out.println("4. Salir");
+        System.out.println("4. Reservar Recurso"); // Nueva opción
+        System.out.println("5. Cancelar Reserva"); // Nueva opción
+        System.out.println("6. Mostrar Ubicación"); // Nueva opción
+        System.out.println("7. Salir");
         System.out.print("Seleccione una opción: ");
     }
 
@@ -51,6 +54,15 @@ public class Consola {
                 prestarRecurso();
                 break;
             case "4":
+                reservarRecurso();
+                break;
+            case "5":
+                cancelarReserva();
+                break;
+            case "6":
+                mostrarUbicacion();
+                break;
+            case "7":
                 System.out.println("Saliendo del sistema.");
                 break;
             default:
@@ -65,9 +77,9 @@ public class Consola {
             System.out.println(entry.getKey() + ". " + entry.getValue());
         }
         System.out.print("Ingrese su opción: ");
-        String opcion = scanner.nextLine();
+        String tipo = scanner.nextLine();
 
-        Supplier<RecursoDigital> creador = creadoresRecursos.get(opcion);
+        Supplier<RecursoDigital> creador = creadoresRecursos.get(tipo);
         if (creador != null) {
             RecursoDigital nuevoRecurso = creador.get();
             if (nuevoRecurso != null) {
@@ -88,7 +100,9 @@ public class Consola {
         String autor = scanner.nextLine();
         System.out.print("Ingrese el ISBN del libro: ");
         String isbn = scanner.nextLine();
-        return new Libro(titulo, id, autor, isbn);
+        System.out.print("Ingrese la ubicación del libro: ");
+        String ubicacion = scanner.nextLine();
+        return new Libro(titulo, id, autor, isbn, ubicacion);
     }
 
     private Revista crearRevistaDesdeInput() {
@@ -100,7 +114,9 @@ public class Consola {
         String numero = scanner.nextLine();
         System.out.print("Ingrese el ISSN de la revista: ");
         String issn = scanner.nextLine();
-        return new Revista(titulo, id, numero, issn);
+        System.out.print("Ingrese la ubicación de la revista: ");
+        String ubicacion = scanner.nextLine();
+        return new Revista(titulo, id, numero, issn, ubicacion);
     }
 
     private Audiolibro crearAudiolibroDesdeInput() {
@@ -112,7 +128,9 @@ public class Consola {
         String narrador = scanner.nextLine();
         System.out.print("Ingrese la duración del audiolibro: ");
         String duracion = scanner.nextLine();
-        return new Audiolibro(titulo, id, narrador, duracion);
+        System.out.print("Ingrese la ubicación del audiolibro: ");
+        String ubicacion = scanner.nextLine();
+        return new Audiolibro(titulo, id, narrador, duracion, ubicacion);
     }
 
     private void mostrarRecursoPorId() {
@@ -147,6 +165,59 @@ public class Consola {
         }
     }
 
+    private void reservarRecurso() {
+        System.out.print("Ingrese el ID del recurso a reservar: ");
+        String recursoId = scanner.nextLine();
+        RecursoDigital recurso = gestorRecursos.obtenerRecurso(recursoId);
+
+        if (recurso instanceof Reservable) {
+            System.out.print("Ingrese su ID de usuario: ");
+            String usuarioId = scanner.nextLine();
+            Usuario usuario = gestorUsuarios.obtenerUsuario(usuarioId);
+
+            if (usuario != null) {
+                ((Reservable) recurso).reservar(usuario);
+            } else {
+                System.out.println("No se encontró ningún usuario con el ID: " + usuarioId);
+            }
+        } else {
+            System.out.println("El recurso con ID " + recursoId + " no se puede reservar.");
+        }
+    }
+
+    private void cancelarReserva() {
+        System.out.print("Ingrese el ID del recurso para cancelar la reserva: ");
+        String recursoId = scanner.nextLine();
+        RecursoDigital recurso = gestorRecursos.obtenerRecurso(recursoId);
+
+        if (recurso instanceof Reservable) {
+            System.out.print("Ingrese su ID de usuario: ");
+            String usuarioId = scanner.nextLine();
+            Usuario usuario = gestorUsuarios.obtenerUsuario(usuarioId);
+
+            if (usuario != null) {
+                ((Reservable) recurso).cancelarReserva(usuario);
+            } else {
+                System.out.println("No se encontró ningún usuario con el ID: " + usuarioId);
+            }
+        } else {
+            System.out.println("El recurso con ID " + recursoId + " no se puede reservar.");
+        }
+    }
+
+    private void mostrarUbicacion() {
+        System.out.print("Ingrese el ID del recurso para mostrar su ubicación: ");
+        String recursoId = scanner.nextLine();
+        RecursoDigital recurso = gestorRecursos.obtenerRecurso(recursoId);
+
+        if (recurso instanceof Localizable) {
+            String ubicacion = ((Localizable) recurso).getUbicacion();
+            System.out.println("La ubicación del recurso con ID " + recursoId + " es: " + ubicacion);
+        } else {
+            System.out.println("El recurso con ID " + recursoId + " no tiene información de ubicación.");
+        }
+    }
+
     public void cerrarScanner() {
         scanner.close();
     }
@@ -156,12 +227,16 @@ public class Consola {
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
         Consola consola = new Consola(gestorRecursos, gestorUsuarios);
 
+        // Crear algunos usuarios para probar
+        consola.gestorUsuarios.agregarUsuario(new Usuario("Juan Perez", "1", "juan.perez@email.com"));
+        consola.gestorUsuarios.agregarUsuario(new Usuario("Maria Lopez", "2", "maria.lopez@email.com"));
+
         String opcion;
         do {
             consola.mostrarMenu();
             opcion = consola.scanner.nextLine();
             consola.ejecutarOpcion(opcion);
-        } while (!opcion.equals("4"));
+        } while (!opcion.equals("7"));
 
         consola.cerrarScanner();
     }
