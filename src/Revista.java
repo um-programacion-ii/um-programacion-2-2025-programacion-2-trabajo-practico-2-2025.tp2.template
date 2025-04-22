@@ -1,6 +1,6 @@
 package src;
 
-public class Revista implements RecursoDigital{
+public class Revista implements RecursoDigital {
     private String titulo;
     private String id;
     private String numero;
@@ -12,6 +12,7 @@ public class Revista implements RecursoDigital{
         this.numero = numero;
         this.issn = issn;
     }
+
     @Override
     public String getTitulo() {
         return titulo;
