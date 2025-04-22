@@ -1,0 +1,59 @@
+name: Issue de desarrollo
+description: Crear un nuevo issue para el trabajo práctico (puede ser una tarea, feature o bugfix) vinculado a un milestone y proyecto
+title: "[Issue] "
+labels:
+  - Tarea
+  - Feature
+  - Bugfix
+assignees: [temPLAY333]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ **Completa los siguientes campos para registrar este issue correctamente.**  
+        Recordá vincular el issue a un *milestone* y al *project board* correspondiente.
+
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo de Issue
+      description: Selecciona el tipo de issue que estás creando
+      options:
+        - Tarea
+        - Feature
+        - Bugfix
+    validations:
+      required: true
+
+  - type: input
+    id: objetivo
+    attributes:
+      label: Objetivo
+      description: ¿Qué se busca lograr con este issue?
+      default: Crear clase [], Crear tests, Agregar funcionalidad []()
+    validations:
+      required: true
+
+  - type: textarea
+    id: detalles
+    attributes:
+      label: Detalles de implementación
+      description: Explicá brevemente los pasos o componentes involucrados.
+      default: |
+        - Crear clase []
+        - Agregar constructor con parámetros
+        - Implementar getters y setters
+        - Probar desde clase Main
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist de finalización
+      description: Marcá los puntos que se deben cumplir para dar el issue como terminado
+      options:
+        - label: La funcionalidad está implementada correctamente
+        - label: Se probó la funcionalidad en `Main` o test correspondiente
+        - label: Se creó una rama específica para este issue
+        - label: Se abrió un Pull Request que menciona este Issue
