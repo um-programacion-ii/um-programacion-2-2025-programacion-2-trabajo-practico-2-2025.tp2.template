@@ -1,4 +1,3 @@
-// src/Consola.java
 package src;
 
 import java.util.HashMap;
@@ -9,12 +8,14 @@ import java.util.function.Supplier;
 public class Consola {
     private Scanner scanner;
     private GestorRecursos gestorRecursos;
+    private GestorUsuarios gestorUsuarios;
     private Map<String, Supplier<RecursoDigital>> creadoresRecursos;
-    private Map<String, String> tiposRecursos; // Para almacenar la descripción de cada opción
+    private Map<String, String> tiposRecursos;
 
-    public Consola(GestorRecursos gestorRecursos) {
+    public Consola(GestorRecursos gestorRecursos, GestorUsuarios gestorUsuarios) {
         this.scanner = new Scanner(System.in);
         this.gestorRecursos = gestorRecursos;
+        this.gestorUsuarios = gestorUsuarios;
         this.creadoresRecursos = new HashMap<>();
         this.tiposRecursos = new HashMap<>();
         inicializarOpcionesRecursos();
@@ -27,9 +28,6 @@ public class Consola {
         tiposRecursos.put("2", "Revista");
         creadoresRecursos.put("3", this::crearAudiolibroDesdeInput);
         tiposRecursos.put("3", "Audiolibro");
-        // Para agregar un nuevo tipo de recurso, simplemente añade otra entrada a ambos Maps
-        // creadoresRecursos.put("4", this::crearEbookDesdeInput);
-        // tiposRecursos.put("4", "Ebook");
     }
 
     public void mostrarMenu() {
@@ -131,12 +129,21 @@ public class Consola {
 
     private void prestarRecurso() {
         System.out.print("Ingrese el ID del recurso a prestar: ");
-        String id = scanner.nextLine();
-        RecursoDigital recurso = gestorRecursos.obtenerRecurso(id);
+        String recursoId = scanner.nextLine();
+        RecursoDigital recurso = gestorRecursos.obtenerRecurso(recursoId);
+
         if (recurso instanceof Prestable) {
-            ((Prestable) recurso).prestar();
+            System.out.print("Ingrese el ID del usuario que tomará prestado el recurso: ");
+            String usuarioId = scanner.nextLine();
+            Usuario usuario = gestorUsuarios.obtenerUsuario(usuarioId);
+
+            if (usuario != null) {
+                ((Prestable) recurso).prestar(usuario);
+            } else {
+                System.out.println("No se encontró ningún usuario con el ID: " + usuarioId);
+            }
         } else {
-            System.out.println("El recurso con ID " + id + " no se puede prestar.");
+            System.out.println("El recurso con ID " + recursoId + " no se puede prestar.");
         }
     }
 
@@ -145,8 +152,9 @@ public class Consola {
     }
 
     public static void main(String[] args) {
-        GestorRecursos gestor = new GestorRecursos();
-        Consola consola = new Consola(gestor);
+        GestorRecursos gestorRecursos = new GestorRecursos();
+        GestorUsuarios gestorUsuarios = new GestorUsuarios();
+        Consola consola = new Consola(gestorRecursos, gestorUsuarios);
 
         String opcion;
         do {
