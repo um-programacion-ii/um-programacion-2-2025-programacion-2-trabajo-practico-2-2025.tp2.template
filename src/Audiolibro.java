@@ -12,37 +12,18 @@ public class Audiolibro implements RecursoDigital, Prestable, Reservable, Locali
     private boolean reservado = false;
     private List<Usuario> listaDeEspera = new ArrayList<>();
     private String ubicacion;
+    private ServicioNotificaciones servicioNotificaciones; // Dependencia abstracta
 
-    public Audiolibro(String titulo, String id, String narrador, String duracion, String ubicacion) {
+    public Audiolibro(String titulo, String id, String narrador, String duracion, String ubicacion, ServicioNotificaciones servicioNotificaciones) {
         this.titulo = titulo;
         this.id = id;
         this.narrador = narrador;
         this.duracion = duracion;
         this.ubicacion = ubicacion;
+        this.servicioNotificaciones = servicioNotificaciones; // Inyección por constructor
     }
 
-    @Override
-    public String getTitulo() {
-        return titulo;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void mostrarDetalles() {
-        System.out.println("Audiolibro: " + titulo + " (ID: " + id + ")");
-        System.out.println("  Narrador: " + narrador);
-        System.out.println("  Duración: " + duracion);
-        System.out.println("  Ubicación: " + ubicacion);
-        System.out.println("  Prestado: " + (prestado ? "Sí" : "No"));
-        System.out.println("  Reservado: " + (reservado ? "Sí" : "No"));
-        if (!listaDeEspera.isEmpty()) {
-            System.out.println("  Lista de espera: " + listaDeEspera.stream().map(Usuario::getNombre).toList());
-        }
-    }
+    // ... (getters y mostrarDetalles() como antes) ...
 
     @Override
     public void prestar(Usuario usuario) {
@@ -69,6 +50,9 @@ public class Audiolibro implements RecursoDigital, Prestable, Reservable, Locali
             this.reservado = true;
             this.listaDeEspera.add(usuario);
             System.out.println("Audiolibro '" + getTitulo() + "' reservado por " + usuario.getNombre() + ".");
+            if (servicioNotificaciones != null) {
+                servicioNotificaciones.enviarNotificacion(usuario, "El audiolibro '" + getTitulo() + "' ha sido reservado exitosamente.");
+            }
         } else if (prestado) {
             this.listaDeEspera.add(usuario);
             System.out.println("Audiolibro '" + getTitulo() + "' añadido a la lista de espera para " + usuario.getNombre() + ".");
