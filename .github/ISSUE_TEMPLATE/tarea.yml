@@ -2,7 +2,7 @@ name: Issue de desarrollo
 description: Crear un nuevo issue para el trabajo práctico (puede ser una tarea, feature o bugfix) vinculado a un milestone y proyecto
 assignees: [temPLAY333]
 labels: [enhancement, test]
-type: [Feature]
+type: "Feature"
 projects: [TrabajoPractico-2]
 body:
   - type: markdown
