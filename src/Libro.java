@@ -11,14 +11,16 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
     private boolean prestado = false;
     private boolean reservado = false;
     private List<Usuario> listaDeEspera = new ArrayList<>();
-    private String ubicacion; // Nuevo atributo para la ubicación
+    private String ubicacion;
+    private ServicioNotificaciones servicioNotificaciones; // Dependencia abstracta
 
-    public Libro(String titulo, String id, String autor, String isbn, String ubicacion) {
+    public Libro(String titulo, String id, String autor, String isbn, String ubicacion, ServicioNotificaciones servicioNotificaciones) {
         this.titulo = titulo;
         this.id = id;
         this.autor = autor;
         this.isbn = isbn;
         this.ubicacion = ubicacion;
+        this.servicioNotificaciones = servicioNotificaciones; // Inyección por constructor
     }
 
     @Override
@@ -47,7 +49,7 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
     @Override
     public void prestar(Usuario usuario) {
         this.prestado = true;
-        this.reservado = false; // Al prestar, se libera cualquier reserva
+        this.reservado = false;
         System.out.println("Libro '" + getTitulo() + "' prestado a " + usuario.getNombre() + ".");
     }
 
@@ -69,6 +71,9 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
             this.reservado = true;
             this.listaDeEspera.add(usuario);
             System.out.println("Libro '" + getTitulo() + "' reservado por " + usuario.getNombre() + ".");
+            if (servicioNotificaciones != null) {
+                servicioNotificaciones.enviarNotificaciones(usuario, "El libro '" + getTitulo() + "' ha sido reservado exitosamente.");
+            }
         } else if (prestado) {
             this.listaDeEspera.add(usuario);
             System.out.println("Libro '" + getTitulo() + "' añadido a la lista de espera para " + usuario.getNombre() + ".");
@@ -104,7 +109,6 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
         return ubicacion;
     }
 
-    // Setter para la ubicación (podría ser útil al agregar el libro)
     public void setUbicacion(String ubicacion) {
         this.ubicacion = ubicacion;
     }

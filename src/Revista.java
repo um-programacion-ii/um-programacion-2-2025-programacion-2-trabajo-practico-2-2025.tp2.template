@@ -11,13 +11,15 @@ public class Revista implements RecursoDigital, Reservable, Localizable {
     private boolean reservado = false;
     private List<Usuario> listaDeEspera = new ArrayList<>();
     private String ubicacion;
+    private ServicioNotificaciones servicioNotificaciones;
 
-    public Revista(String titulo, String id, String numero, String issn, String ubicacion) {
+    public Revista(String titulo, String id, String numero, String issn, String ubicacion, ServicioNotificaciones servicioNotificaciones) {
         this.titulo = titulo;
         this.id = id;
         this.numero = numero;
         this.issn = issn;
         this.ubicacion = ubicacion;
+        this.servicioNotificaciones = servicioNotificaciones;
     }
 
     @Override
@@ -48,6 +50,9 @@ public class Revista implements RecursoDigital, Reservable, Localizable {
             this.reservado = true;
             this.listaDeEspera.add(usuario);
             System.out.println("Revista '" + getTitulo() + "' reservada por " + usuario.getNombre() + ".");
+            if (servicioNotificaciones != null) {
+                servicioNotificaciones.enviarNotificaciones(usuario, "La revista '" + getTitulo() + "' ha sido reservada exitosamente.");
+            }
         } else {
             this.listaDeEspera.add(usuario);
             System.out.println("Revista '" + getTitulo() + "' añadida a la lista de espera para " + usuario.getNombre() + ".");

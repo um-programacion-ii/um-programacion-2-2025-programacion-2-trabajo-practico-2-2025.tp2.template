@@ -9,13 +9,15 @@ public class Consola {
     private Scanner scanner;
     private GestorRecursos gestorRecursos;
     private GestorUsuarios gestorUsuarios;
+    private ServicioNotificaciones servicioNotificaciones;
     private Map<String, Supplier<RecursoDigital>> creadoresRecursos;
     private Map<String, String> tiposRecursos;
 
-    public Consola(GestorRecursos gestorRecursos, GestorUsuarios gestorUsuarios) {
+    public Consola(GestorRecursos gestorRecursos, GestorUsuarios gestorUsuarios, ServicioNotificaciones servicioNotificaciones) {
         this.scanner = new Scanner(System.in);
         this.gestorRecursos = gestorRecursos;
         this.gestorUsuarios = gestorUsuarios;
+        this.servicioNotificaciones = servicioNotificaciones;
         this.creadoresRecursos = new HashMap<>();
         this.tiposRecursos = new HashMap<>();
         inicializarOpcionesRecursos();
@@ -35,9 +37,9 @@ public class Consola {
         System.out.println("1. Agregar Recurso");
         System.out.println("2. Mostrar Recurso por ID");
         System.out.println("3. Prestar Recurso");
-        System.out.println("4. Reservar Recurso"); // Nueva opción
-        System.out.println("5. Cancelar Reserva"); // Nueva opción
-        System.out.println("6. Mostrar Ubicación"); // Nueva opción
+        System.out.println("4. Reservar Recurso");
+        System.out.println("5. Cancelar Reserva");
+        System.out.println("6. Mostrar Ubicación");
         System.out.println("7. Salir");
         System.out.print("Seleccione una opción: ");
     }
@@ -48,7 +50,7 @@ public class Consola {
                 agregarNuevoRecurso();
                 break;
             case "2":
-                mostrarRecursoPorId();
+                mostrarRecursoPorId(); // <--- POSIBLEMENTE LA LÍNEA 53
                 break;
             case "3":
                 prestarRecurso();
@@ -102,7 +104,7 @@ public class Consola {
         String isbn = scanner.nextLine();
         System.out.print("Ingrese la ubicación del libro: ");
         String ubicacion = scanner.nextLine();
-        return new Libro(titulo, id, autor, isbn, ubicacion);
+        return new Libro(titulo, id, autor, isbn, ubicacion, servicioNotificaciones);
     }
 
     private Revista crearRevistaDesdeInput() {
@@ -116,7 +118,7 @@ public class Consola {
         String issn = scanner.nextLine();
         System.out.print("Ingrese la ubicación de la revista: ");
         String ubicacion = scanner.nextLine();
-        return new Revista(titulo, id, numero, issn, ubicacion);
+        return new Revista(titulo, id, numero, issn, ubicacion, servicioNotificaciones);
     }
 
     private Audiolibro crearAudiolibroDesdeInput() {
@@ -130,7 +132,7 @@ public class Consola {
         String duracion = scanner.nextLine();
         System.out.print("Ingrese la ubicación del audiolibro: ");
         String ubicacion = scanner.nextLine();
-        return new Audiolibro(titulo, id, narrador, duracion, ubicacion);
+        return new Audiolibro(titulo, id, narrador, duracion, ubicacion, servicioNotificaciones);
     }
 
     private void mostrarRecursoPorId() {
@@ -225,9 +227,9 @@ public class Consola {
     public static void main(String[] args) {
         GestorRecursos gestorRecursos = new GestorRecursos();
         GestorUsuarios gestorUsuarios = new GestorUsuarios();
-        Consola consola = new Consola(gestorRecursos, gestorUsuarios);
+        ServicioNotificaciones servicioNotificacionesConsola = new ServicioNotificacionesConsola();
+        Consola consola = new Consola(gestorRecursos, gestorUsuarios, servicioNotificacionesConsola);
 
-        // Crear algunos usuarios para probar
         consola.gestorUsuarios.agregarUsuario(new Usuario("Juan Perez", "1", "juan.perez@email.com"));
         consola.gestorUsuarios.agregarUsuario(new Usuario("Maria Lopez", "2", "maria.lopez@email.com"));
 
