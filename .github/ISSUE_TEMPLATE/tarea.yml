@@ -1,15 +1,14 @@
-name: Issue de desarrollo
-description: Crear un nuevo issue para el trabajo práctico (puede ser una tarea, feature o bugfix) vinculado a un milestone y proyecto
+name: Issue de Prog2
+description: Crear un nuevo issue para el trabajo práctico vinculado a un milestone y proyecto
 assignees: [temPLAY333]
 labels: [enhancement, test]
 type: "Feature"
-projects: [TrabajoPractico-2]
+projects: "TrabajoPractico-2"
 body:
   - type: markdown
     attributes:
       value: |
         ⚠️ **Completa los siguientes campos para registrar este issue correctamente.**  
-        Recordá vincular el issue a un *milestone* y al *project board* correspondiente.
 
   - type: input
     id: objetivo
