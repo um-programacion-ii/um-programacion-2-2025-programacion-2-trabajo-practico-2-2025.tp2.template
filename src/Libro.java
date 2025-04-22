@@ -23,7 +23,28 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
         this.servicioNotificaciones = servicioNotificaciones; // Inyección por constructor
     }
 
-    // ... (getters y mostrarDetalles() como antes) ...
+    @Override
+    public String getTitulo() {
+        return titulo;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void mostrarDetalles() {
+        System.out.println("Libro: " + titulo + " (ID: " + id + ")");
+        System.out.println("  Autor: " + autor);
+        System.out.println("  ISBN: " + isbn);
+        System.out.println("  Ubicación: " + ubicacion);
+        System.out.println("  Prestado: " + (prestado ? "Sí" : "No"));
+        System.out.println("  Reservado: " + (reservado ? "Sí" : "No"));
+        if (!listaDeEspera.isEmpty()) {
+            System.out.println("  Lista de espera: " + listaDeEspera.stream().map(Usuario::getNombre).toList());
+        }
+    }
 
     @Override
     public void prestar(Usuario usuario) {
@@ -51,7 +72,7 @@ public class Libro implements RecursoDigital, Prestable, Reservable, Localizable
             this.listaDeEspera.add(usuario);
             System.out.println("Libro '" + getTitulo() + "' reservado por " + usuario.getNombre() + ".");
             if (servicioNotificaciones != null) {
-                servicioNotificaciones.enviarNotificacion(usuario, "El libro '" + getTitulo() + "' ha sido reservado exitosamente.");
+                servicioNotificaciones.enviarNotificaciones(usuario, "El libro '" + getTitulo() + "' ha sido reservado exitosamente.");
             }
         } else if (prestado) {
             this.listaDeEspera.add(usuario);

@@ -11,7 +11,7 @@ public class Revista implements RecursoDigital, Reservable, Localizable {
     private boolean reservado = false;
     private List<Usuario> listaDeEspera = new ArrayList<>();
     private String ubicacion;
-    private ServicioNotificaciones servicioNotificaciones; // Dependencia abstracta
+    private ServicioNotificaciones servicioNotificaciones;
 
     public Revista(String titulo, String id, String numero, String issn, String ubicacion, ServicioNotificaciones servicioNotificaciones) {
         this.titulo = titulo;
@@ -19,10 +19,30 @@ public class Revista implements RecursoDigital, Reservable, Localizable {
         this.numero = numero;
         this.issn = issn;
         this.ubicacion = ubicacion;
-        this.servicioNotificaciones = servicioNotificaciones; // Inyección por constructor
+        this.servicioNotificaciones = servicioNotificaciones;
     }
 
-    // ... (getters y mostrarDetalles() como antes) ...
+    @Override
+    public String getTitulo() {
+        return titulo;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void mostrarDetalles() {
+        System.out.println("Revista: " + titulo + " (ID: " + id + ")");
+        System.out.println("  Número: " + numero);
+        System.out.println("  ISSN: " + issn);
+        System.out.println("  Ubicación: " + ubicacion);
+        System.out.println("  Reservado: " + (reservado ? "Sí" : "No"));
+        if (!listaDeEspera.isEmpty()) {
+            System.out.println("  Lista de espera: " + listaDeEspera.stream().map(Usuario::getNombre).toList());
+        }
+    }
 
     @Override
     public void reservar(Usuario usuario) {
@@ -31,7 +51,7 @@ public class Revista implements RecursoDigital, Reservable, Localizable {
             this.listaDeEspera.add(usuario);
             System.out.println("Revista '" + getTitulo() + "' reservada por " + usuario.getNombre() + ".");
             if (servicioNotificaciones != null) {
-                servicioNotificaciones.enviarNotificacion(usuario, "La revista '" + getTitulo() + "' ha sido reservada exitosamente.");
+                servicioNotificaciones.enviarNotificaciones(usuario, "La revista '" + getTitulo() + "' ha sido reservada exitosamente.");
             }
         } else {
             this.listaDeEspera.add(usuario);
