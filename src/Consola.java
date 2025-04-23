@@ -5,21 +5,23 @@ import modelo.*;
 import servicios.AlertaVencimiento;
 import servicios.NotificadorConsola;
 import servicios.ServicioNotificaciones;
+import servicios.SistemaRecordatorios;
 
 import java.util.Scanner;
 
 public class Consola {
     private final GestorUsuarios gestorUsuarios;
     private final GestorRecursos gestorRecursos;
-    private final SistemaReservas sistemaReservas;
+    private final AlertaVencimiento.SistemaReservas sistemaReservas;
     private final SistemaPrestamosConcurrente sistemaPrestamos;
     private final ServicioNotificaciones servicioNotificaciones;
     private final Scanner scanner;
+    private SistemaRecordatorios recordatorios;
 
     public Consola() {
         gestorUsuarios = new GestorUsuarios();
         gestorRecursos = new GestorRecursos();
-        sistemaReservas = new SistemaReservas();
+        sistemaReservas = new AlertaVencimiento.SistemaReservas();
         Notificable canal = new NotificadorConsola();
         servicioNotificaciones = new ServicioNotificaciones(canal);
         sistemaPrestamos = new SistemaPrestamosConcurrente(sistemaReservas, servicioNotificaciones);
@@ -27,6 +29,10 @@ public class Consola {
     }
 
     public void iniciar() throws InterruptedException {
+        // Iniciar recordatorios periódicos
+        recordatorios = new SistemaRecordatorios();
+        recordatorios.iniciar(sistemaPrestamos.getTodos());
+
         boolean salir = false;
         while (!salir) {
             System.out.println("\n========= MENÚ =========");
@@ -35,7 +41,7 @@ public class Consola {
             System.out.println("3. Realizar préstamo");
             System.out.println("4. Devolver recurso");
             System.out.println("5. Ver reportes");
-            System.out.println("6. Ver alertas de vencimiento");
+            System.out.println("6. Ver alertas de vencimiento manual");
             System.out.println("0. Salir");
             System.out.print("Seleccioná una opción: ");
             String opcion = scanner.nextLine();
@@ -50,6 +56,7 @@ public class Consola {
                 case "0" -> {
                     salir = true;
                     sistemaPrestamos.apagarProcesador();
+                    recordatorios.detener();
                     System.out.println("👋 Cerrando sistema...");
                 }
                 default -> System.out.println("❌ Opción inválida.");

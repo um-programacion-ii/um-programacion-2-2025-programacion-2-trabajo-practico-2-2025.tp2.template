@@ -7,6 +7,7 @@ import modelo.Usuario;
 import modelo.RecursoBase;
 import modelo.Prestamo;
 import modelo.Reserva;
+import servicios.AlertaVencimiento;
 import servicios.ServicioNotificaciones;
 
 import java.util.concurrent.*;
@@ -15,11 +16,11 @@ import java.util.*;
 public class SistemaPrestamosConcurrente {
     private final BlockingQueue<SolicitudPrestamo> colaSolicitudes = new LinkedBlockingQueue<>();
     private final List<Prestamo> prestamos = new ArrayList<>();
-    private final SistemaReservas sistemaReservas;
+    private final AlertaVencimiento.SistemaReservas sistemaReservas;
     private final ServicioNotificaciones servicioNotificaciones;
     private final ExecutorService executor;
 
-    public SistemaPrestamosConcurrente(SistemaReservas sistemaReservas, ServicioNotificaciones servicioNotificaciones) {
+    public SistemaPrestamosConcurrente(AlertaVencimiento.SistemaReservas sistemaReservas, ServicioNotificaciones servicioNotificaciones) {
         this.sistemaReservas = sistemaReservas;
         this.servicioNotificaciones = servicioNotificaciones;
         this.executor = Executors.newSingleThreadExecutor();
