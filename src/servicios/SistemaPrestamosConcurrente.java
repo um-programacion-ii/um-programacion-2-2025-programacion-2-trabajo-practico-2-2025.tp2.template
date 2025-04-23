@@ -1,29 +1,27 @@
-package gestores;
-import excepciones.UsuarioNoEncontradoException;
+package servicios;
+
 import excepciones.RecursoNoDisponibleException;
+import excepciones.UsuarioNoEncontradoException;
+import gestores.SistemaReservas;
+import modelo.*;
 
-import modelo.SolicitudPrestamo;
-import modelo.Usuario;
-import modelo.RecursoBase;
-import modelo.Prestamo;
-import modelo.Reserva;
-import servicios.AlertaVencimiento;
-import servicios.ServicioNotificaciones;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
-import java.util.*;
 
 public class SistemaPrestamosConcurrente {
     private final BlockingQueue<SolicitudPrestamo> colaSolicitudes = new LinkedBlockingQueue<>();
     private final List<Prestamo> prestamos = new ArrayList<>();
-    private final AlertaVencimiento.SistemaReservas sistemaReservas;
+    private final SistemaReservas sistemaReservas;
     private final ServicioNotificaciones servicioNotificaciones;
     private final ExecutorService executor;
+    private final AlertaDisponibilidad alertaDisponibilidad;
 
-    public SistemaPrestamosConcurrente(AlertaVencimiento.SistemaReservas sistemaReservas, ServicioNotificaciones servicioNotificaciones) {
+    public SistemaPrestamosConcurrente(SistemaReservas sistemaReservas, ServicioNotificaciones servicioNotificaciones) {
         this.sistemaReservas = sistemaReservas;
         this.servicioNotificaciones = servicioNotificaciones;
         this.executor = Executors.newSingleThreadExecutor();
+        this.alertaDisponibilidad = new AlertaDisponibilidad();
         iniciarProcesador();
     }
 
@@ -71,7 +69,6 @@ public class SistemaPrestamosConcurrente {
         }
     }
 
-
     public void devolverRecurso(String idRecurso) {
         try {
             synchronized (prestamos) {
@@ -97,9 +94,9 @@ public class SistemaPrestamosConcurrente {
 
                 if (sistemaReservas.hayReservasPendientes(idRecurso)) {
                     Reserva siguiente = sistemaReservas.procesarProximaReserva(idRecurso);
-                    encontrado.getRecurso().prestar(siguiente.getUsuario());
-                    servicioNotificaciones.enviar("El recurso '" + encontrado.getRecurso().getTitulo()
-                            + "' fue entregado automáticamente a " + siguiente.getUsuario().getNombre());
+
+                    // 🔔 Alerta si no se reasigna automáticamente
+                    alertaDisponibilidad.notificarDisponibilidad(encontrado.getRecurso(), siguiente);
                 }
             }
 
@@ -108,13 +105,12 @@ public class SistemaPrestamosConcurrente {
         }
     }
 
-
-    public void apagarProcesador() {
-        executor.shutdownNow();
-    }
-
     public List<Prestamo> getTodos() {
         return prestamos;
     }
 
+    public void apagarProcesador() {
+        executor.shutdownNow();
+        System.out.println("🛑 Procesador de préstamos detenido.");
+    }
 }

@@ -1,18 +1,18 @@
 import gestores.*;
-import gestores.SistemaPrestamosConcurrente;
 import interfaces.Notificable;
 import modelo.*;
 import servicios.AlertaVencimiento;
 import servicios.NotificadorConsola;
 import servicios.ServicioNotificaciones;
 import servicios.SistemaRecordatorios;
+import servicios.SistemaPrestamosConcurrente;
 
 import java.util.Scanner;
 
 public class Consola {
     private final GestorUsuarios gestorUsuarios;
     private final GestorRecursos gestorRecursos;
-    private final AlertaVencimiento.SistemaReservas sistemaReservas;
+    private final SistemaReservas sistemaReservas;
     private final SistemaPrestamosConcurrente sistemaPrestamos;
     private final ServicioNotificaciones servicioNotificaciones;
     private final Scanner scanner;
@@ -21,7 +21,7 @@ public class Consola {
     public Consola() {
         gestorUsuarios = new GestorUsuarios();
         gestorRecursos = new GestorRecursos();
-        sistemaReservas = new AlertaVencimiento.SistemaReservas();
+        sistemaReservas = new SistemaReservas();
         Notificable canal = new NotificadorConsola();
         servicioNotificaciones = new ServicioNotificaciones(canal);
         sistemaPrestamos = new SistemaPrestamosConcurrente(sistemaReservas, servicioNotificaciones);
