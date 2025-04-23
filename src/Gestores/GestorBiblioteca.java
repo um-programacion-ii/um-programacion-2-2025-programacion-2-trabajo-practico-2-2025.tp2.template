@@ -36,10 +36,22 @@ public class GestorBiblioteca {
     public void verRecursos() {
         gestorRecursos.mostrarTodos();
     }
-    public void buscarRecursoPorTitulo(String titulo) {
+    public RecursoBase buscarRecursoPorTitulo(String titulo) {
         var resultados = gestorRecursos.buscarPorTitulo(titulo);
-        resultados.forEach(System.out::println);
+        if (resultados.isEmpty()) {
+            return null;
+        }
+        return resultados.get(0); // o permitir que el usuario elija si hay varios
     }
+
+    public RecursoBase buscarRecursoPorId(int id) {
+        var resultados = gestorRecursos.buscarPorId(id);
+        if (resultados.isEmpty()) {
+            return null;
+        }
+        return resultados.get(0);
+    }
+
 
     public void filtrarPorCategoria(CategoriaRecurso categoria) {
         var resultados = gestorRecursos.filtrarPorCategoria(categoria);

@@ -36,11 +36,26 @@ public class GestorRecursos {
                 .toList();
     }
 
+    public List<RecursoBase> buscarPorId(int id) {
+        return Recursos.stream()
+                .filter(r -> {
+                    try {
+                        return Integer.parseInt(r.getIdentificador()) == id;
+                    } catch (NumberFormatException e) {
+                        return false;
+                    }
+                })
+                .toList();
+    }
+
+
     public List<RecursoBase> obtenerOrdenadosPorTitulo() {
         return Recursos.stream()
                 .sorted(Comparator.comparing(RecursoBase::getTitulo))
                 .toList();
     }
+
+
 
     public void mostrarTodos() {
         Recursos.forEach(System.out::println);
@@ -55,4 +70,6 @@ public class GestorRecursos {
         System.out.println("Lista de Recursos completa");
         Recursos.forEach(System.out::println);
     }
+
+
 }
