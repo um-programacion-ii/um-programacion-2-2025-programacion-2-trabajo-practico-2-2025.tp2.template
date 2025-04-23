@@ -8,12 +8,37 @@ public class Prestamo {
     private RecursoBase recurso;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
+    private LocalDateTime fechaDevolucion;
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void setRecurso(RecursoBase recurso) {
+        this.recurso = recurso;
+    }
+
+    public void setFechaInicio(LocalDateTime fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public void setFechaFin(LocalDateTime fechaFin) {
+        this.fechaFin = fechaFin;
+    }
+
+    public LocalDateTime getFechaDevolucion() {
+        return fechaDevolucion;
+    }
+
+    public void setFechaDevolucion(LocalDateTime fechaDevolucion) {
+        this.fechaDevolucion = fechaDevolucion;
+    }
 
     public Prestamo(Usuario usuario, RecursoBase recurso) {
         this.usuario = usuario;
         this.recurso = recurso;
         this.fechaInicio = LocalDateTime.now();
-        this.fechaFin = fechaInicio.plusDays(14); // préstamo por 14 días
+        this.fechaFin = fechaInicio.plusDays(14);
     }
 
     public Usuario getUsuario() {

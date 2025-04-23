@@ -16,7 +16,6 @@ public class GestorUsuarios {
         Usuario usuarioNuevo = new Usuario(nombre, email);
         this.Usuarios.add(usuarioNuevo);
 
-        // Notificación de bienvenida
         notificador.enviarNotificacion(usuarioNuevo,
                 "Bienvenido " + nombre + "! Tu cuenta fue creada exitosamente.");
     }

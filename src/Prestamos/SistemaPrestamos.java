@@ -24,6 +24,18 @@ public class SistemaPrestamos {
     }
 
 
+    public List<Prestamo> obtenerPrestamosActivos() {
+        List<Prestamo> prestamosFiltrados = new ArrayList<>();
+
+        for (Prestamo prestamo : prestamosActivos) {
+            if (prestamo.getRecurso().getEstado() == EstadoRecurso.EnPrestamo) {
+                prestamosFiltrados.add(prestamo);
+            }
+        }
+
+        return prestamosFiltrados;
+    }
+
 
     public void solicitarPrestamo(Usuario usuario, RecursoBase recurso) {
         if (recurso.estaDisponible()) {
@@ -32,6 +44,7 @@ public class SistemaPrestamos {
                 Prestamo nuevoPrestamo = new Prestamo(usuario, recurso);
                 prestamosActivos.add(nuevoPrestamo);
                 executor.submit(() -> notificador.enviarNotificacion(usuario, "Tu recurso ha sido prestado."));
+
             } catch (RecursoNoDisponibleException e) {
                 System.out.println("Error al prestar recurso: " + e.getMessage());
                 notificador.enviarNotificacion(usuario, "No se pudo prestar el recurso: " + recurso.getTitulo());
@@ -42,40 +55,117 @@ public class SistemaPrestamos {
         }
     }
 
-    public void devolverRecurso(int recursoId) {
-        Prestamo prestamoEncontrado = null;
+    public void devolverRecurso(int recursoId, GestorBiblioteca gestor) {
+        String recursoIdStr = String.valueOf(recursoId);
+        System.out.println("DEBUG: Buscando recurso con ID: " + recursoIdStr);
 
-        for (Prestamo prestamo : prestamosActivos) {
-            int idRecurso = Integer.parseInt(prestamo.getRecurso().getIdentificador());
-            if (idRecurso == recursoId) {
-                prestamoEncontrado = prestamo;
+        RecursoBase recursoADevolver = null;
+        for (RecursoBase recurso : gestor.getRecursos()) {
+            if (recurso.getEstado() == EstadoRecurso.EnPrestamo &&
+                    recurso.getIdentificador().equals(recursoIdStr)) {
+                recursoADevolver = recurso;
                 break;
             }
         }
-        if (prestamoEncontrado != null) {
-            RecursoBase recurso = prestamoEncontrado.getRecurso();
-            recurso.devolver();
+
+        if (recursoADevolver != null) {
+            Prestamo prestamoEncontrado = null;
+            for (Prestamo prestamo : prestamosActivos) {
+                if (prestamo.getRecurso().getIdentificador().equals(recursoIdStr)) {
+                    prestamoEncontrado = prestamo;
+                    break;
+                }
+            }
+
+            if (prestamoEncontrado == null) {
+                Usuario usuarioTemporal = new Usuario("Usuario temporal", "temp@example.com");
+                prestamoEncontrado = new Prestamo(usuarioTemporal, recursoADevolver);
+                prestamosActivos.add(prestamoEncontrado);
+            }
+
+            recursoADevolver.devolver();
             prestamosActivos.remove(prestamoEncontrado);
-            notificador.enviarNotificacion(prestamoEncontrado.getUsuario(),
-                    "Devolución completada para el recurso: " + recurso.getTitulo());
-            System.out.println("Recurso devuelto exitosamente: " + recurso.getTitulo());
-            BlockingQueue<Reserva> cola = reservasPendientes.get(recurso);
+
+            System.out.println("Recurso devuelto exitosamente: " + recursoADevolver.getTitulo());
+
+            if (!prestamoEncontrado.getUsuario().getNombre().equals("Usuario temporal")) {
+                notificador.enviarNotificacion(prestamoEncontrado.getUsuario(),
+                        "Devolución completada para el recurso: " + recursoADevolver.getTitulo());
+            }
+
+            BlockingQueue<Reserva> cola = reservasPendientes.get(recursoADevolver);
             if (cola != null && !cola.isEmpty()) {
                 Reserva siguienteReserva = cola.poll();
                 if (siguienteReserva != null) {
-                    recurso.setEstado(EstadoRecurso.EnPrestamo);
-                    prestamosActivos.add(new Prestamo(siguienteReserva.getUsuario(), recurso));
+                    recursoADevolver.setEstado(EstadoRecurso.EnPrestamo);
+                    prestamosActivos.add(new Prestamo(siguienteReserva.getUsuario(), recursoADevolver));
                     executor.submit(() -> notificador.enviarNotificacion(
                             siguienteReserva.getUsuario(),
-                            "Tu reserva del recurso '" + recurso.getTitulo() + "' ha sido activada automáticamente."
+                            "Tu reserva del recurso ha sido activada automáticamente."
                     ));
                     System.out.println("Reserva de " + siguienteReserva.getUsuario().getNombre() + " activada.");
                 }
             }
         } else {
-            System.out.println("No se encontró un préstamo activo para ese recurso.");
+            System.out.println("No se encontró un recurso en préstamo con el ID: " + recursoIdStr);
         }
     }
+
+
+public void renovarPrestamo(Usuario usuario, int recursoId, GestorBiblioteca gestor) {
+    String recursoIdStr = String.valueOf(recursoId);
+    System.out.println("DEBUG: Intentando renovar recurso con ID: " + recursoIdStr);
+
+    Prestamo prestamoEncontrado = null;
+    for (Prestamo prestamo : prestamosActivos) {
+        if (prestamo.getUsuario().equals(usuario) &&
+                prestamo.getRecurso().getIdentificador().equals(recursoIdStr)) {
+            prestamoEncontrado = prestamo;
+            break;
+        }
+    }
+
+    if (prestamoEncontrado == null) {
+        System.out.println("No se encontró un préstamo activo de ese recurso para este usuario.");
+        System.out.println("Intentando forzar la renovación...");
+
+        RecursoBase recurso = null;
+        for (RecursoBase r : gestor.getRecursos()) {
+            if (r.getIdentificador().equals(recursoIdStr)) {
+                recurso = r;
+                break;
+            }
+        }
+
+        if (recurso != null && recurso instanceof Renovable) {
+            ((Renovable) recurso).renovar();
+            System.out.println("Renovación forzada para el recurso: " + recurso.getTitulo());
+
+            Usuario usuarioTemporal = new Usuario("Usuario temporal", "temp@example.com");
+            Prestamo prestamoTemporal = new Prestamo(usuarioTemporal, recurso);
+            prestamosActivos.add(prestamoTemporal);
+
+            System.out.println("Préstamo simulado agregado (temporal).");
+
+        } else if (recurso != null) {
+            System.out.println("El recurso existe pero no es renovable.");
+        } else {
+            System.out.println("No se encontró el recurso con ese ID.");
+        }
+        return;
+    }
+
+    RecursoBase recurso = prestamoEncontrado.getRecurso();
+    if (recurso instanceof Renovable) {
+        ((Renovable) recurso).renovar();
+        System.out.println("Préstamo renovado para el recurso: " + recurso.getTitulo());
+        notificador.enviarNotificacion(usuario, "Renovaste el préstamo de: " + recurso.getTitulo());
+    } else {
+        System.out.println("Este recurso no es renovable.");
+    }
+}
+
+
 
     public void reservarRecurso(Usuario usuario, RecursoBase recurso) {
         if (recurso.getEstado() == EstadoRecurso.Disponible) {
