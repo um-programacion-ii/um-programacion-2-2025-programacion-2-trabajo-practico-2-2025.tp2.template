@@ -142,6 +142,7 @@ public class RecursoBase implements RecursoDigital, Prestable {
     }
 
 
+
     @Override
     public void devolver() {
         setEstado(EstadoRecurso.Disponible);

@@ -9,6 +9,7 @@ import Interfaces.ServicioNotificaciones;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GestorRecursos {
     private List<RecursoBase> Recursos = new ArrayList<>();
@@ -17,6 +18,10 @@ public class GestorRecursos {
     public GestorRecursos(ServicioNotificaciones notificador) {
         this.notificador = notificador;
     }
+    public List<RecursoBase> getRecursos() {
+        return Recursos;
+    }
+
 
     public void addRecurso(String titulo, String autor, EstadoRecurso estado, CategoriaRecurso categoria) {
         RecursoBase recurso = new RecursoBase(titulo, autor, estado, categoria);
@@ -24,11 +29,14 @@ public class GestorRecursos {
 
     }
 
+
+
     public List<RecursoBase> buscarPorTitulo(String titulo) {
         return Recursos.stream()
                 .filter(r -> r.getTitulo().toLowerCase().contains(titulo.toLowerCase()))
-                .toList();
+                .collect(Collectors.toList());
     }
+
 
     public List<RecursoBase> filtrarPorCategoria(CategoriaRecurso categoria) {
         return Recursos.stream()

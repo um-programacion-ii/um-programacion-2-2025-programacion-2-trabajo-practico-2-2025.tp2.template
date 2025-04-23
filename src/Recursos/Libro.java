@@ -27,12 +27,16 @@ public class Libro extends RecursoBase implements Renovable {
     @Override
     public void renovar() {
         if (esRenovable()) {
-            LocalDateTime nuevaFecha = super.getFechaDevolucion().plusDays(7);
-            super.setFechaDevolucion(nuevaFecha);
-            System.out.println("Recursos.Libro renovado. Nueva fecha: " + nuevaFecha);
+            if (getFechaDevolucion() == null) {
+                setFechaDevolucion(LocalDateTime.now().plusDays(7));
+            } else {
+                setFechaDevolucion(getFechaDevolucion().plusDays(7));
+            }
+            System.out.println("Libro renovado. Nueva fecha: " + getFechaDevolucion());
         } else {
             System.out.println("No se puede renovar: estado actual = " + getEstado());
         }
     }
+
 
 }
