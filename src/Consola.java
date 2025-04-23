@@ -1,11 +1,7 @@
 import gestores.*;
 import interfaces.Notificable;
 import modelo.*;
-import servicios.AlertaVencimiento;
-import servicios.NotificadorConsola;
-import servicios.ServicioNotificaciones;
-import servicios.SistemaRecordatorios;
-import servicios.SistemaPrestamosConcurrente;
+import servicios.*;
 
 import java.util.Scanner;
 
@@ -29,7 +25,7 @@ public class Consola {
     }
 
     public void iniciar() throws InterruptedException {
-        // Iniciar recordatorios periódicos
+        // Iniciar recordatorios automáticos
         recordatorios = new SistemaRecordatorios();
         recordatorios.iniciar(sistemaPrestamos.getTodos());
 
@@ -42,6 +38,7 @@ public class Consola {
             System.out.println("4. Devolver recurso");
             System.out.println("5. Ver reportes");
             System.out.println("6. Ver alertas de vencimiento manual");
+            System.out.println("7. Ver historial de alertas");
             System.out.println("0. Salir");
             System.out.print("Seleccioná una opción: ");
             String opcion = scanner.nextLine();
@@ -53,6 +50,7 @@ public class Consola {
                 case "4" -> devolverRecurso();
                 case "5" -> verReportes();
                 case "6" -> verAlertas();
+                case "7" -> HistorialAlertas.mostrar();
                 case "0" -> {
                     salir = true;
                     sistemaPrestamos.apagarProcesador();
