@@ -25,7 +25,6 @@ public class Consola {
     }
 
     public void iniciar() throws InterruptedException {
-        // Iniciar recordatorios automáticos
         recordatorios = new SistemaRecordatorios();
         recordatorios.iniciar(sistemaPrestamos.getTodos());
 
@@ -39,6 +38,7 @@ public class Consola {
             System.out.println("5. Ver reportes");
             System.out.println("6. Ver alertas de vencimiento manual");
             System.out.println("7. Ver historial de alertas");
+            System.out.println("8. Configurar preferencias de notificación");
             System.out.println("0. Salir");
             System.out.print("Seleccioná una opción: ");
             String opcion = scanner.nextLine();
@@ -51,6 +51,7 @@ public class Consola {
                 case "5" -> verReportes();
                 case "6" -> verAlertas();
                 case "7" -> HistorialAlertas.mostrar();
+                case "8" -> configurarNotificaciones();
                 case "0" -> {
                     salir = true;
                     sistemaPrestamos.apagarProcesador();
@@ -124,5 +125,20 @@ public class Consola {
     private void verAlertas() {
         AlertaVencimiento alerta = new AlertaVencimiento();
         alerta.verificarVencimientos(sistemaPrestamos.getTodos());
+    }
+
+    private void configurarNotificaciones() {
+        System.out.print("ID del usuario a configurar: ");
+        String id = scanner.nextLine();
+        Usuario usuario = gestorUsuarios.buscarUsuarioPorId(id);
+        if (usuario != null) {
+            System.out.println("Actualmente: " + (usuario.isRecibirNotificaciones() ? "✅ Activadas" : "❌ Desactivadas"));
+            System.out.print("¿Desea recibir notificaciones? (si/no): ");
+            String respuesta = scanner.nextLine().trim().toLowerCase();
+            usuario.setRecibirNotificaciones(respuesta.equals("si"));
+            System.out.println("🔧 Preferencia actualizada.");
+        } else {
+            System.out.println("❌ Usuario no encontrado.");
+        }
     }
 }
